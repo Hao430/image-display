@@ -6,8 +6,9 @@ import en from './en'
 const savedLanguage = localStorage.getItem('language') || 'zh'
 
 export const i18n = createI18n({
+  legacy: false, // 使用 Composition API 模式
   locale: savedLanguage,
-  legacy: false,
+  fallbackLocale: 'zh',
   messages: {
     zh,
     en
