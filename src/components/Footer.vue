@@ -1,5 +1,11 @@
 <script setup lang="ts">
-// Footer组件 - 显示页面底部信息
+// 导入图标组件
+import { Icon } from '@iconify/vue'
+// 导入i18n
+import { useI18n } from 'vue-i18n'
+
+// 使用i18n
+const { t } = useI18n()
 </script>
 
 <template>
@@ -10,14 +16,32 @@
         <img src="/logo.png" alt="千幻图卡" />
       </div>
       <div class="footer-info">
-        <p class="footer-title">千幻图卡</p>
+        <p class="footer-title">{{ t('app.title') }}</p>
         <div class="footer-links">
-          <a href="https://image.hao430.xyz" target="_blank">域名：image.hao430.xyz</a>
-          <a href="mailto:fervent430@163.com">邮箱：fervent430@163.com</a>
-          <span>微信：wx2094411638</span>
-          <a href="https://github.com/hao430" target="_blank">GitHub：github.com/hao430</a>
-          <a href="https://github.com/hao430/image-display" target="_blank">项目仓库：image-display</a>
-          <a href="mailto:fervent430@163.com">技术支持：fervent430@163.com</a>
+          <a href="https://image.hao430.xyz" target="_blank">
+            <Icon icon="mdi:web" class="footer-icon" />
+            image.hao430.xyz
+          </a>
+          <a href="mailto:fervent430@163.com">
+            <Icon icon="mdi:email" class="footer-icon" />
+            fervent430@163.com
+          </a>
+          <span>
+            <Icon icon="mdi:wechat" class="footer-icon" />
+            wx2094411638
+          </span>
+          <a href="https://github.com/hao430" target="_blank">
+            <Icon icon="mdi:github" class="footer-icon" />
+            github.com/hao430
+          </a>
+          <a href="https://github.com/hao430/image-display" target="_blank">
+            <Icon icon="mdi:folder-github" class="footer-icon" />
+            image-display
+          </a>
+          <a href="mailto:fervent430@163.com">
+            <Icon icon="mdi:headset" class="footer-icon" />
+            fervent430@163.com
+          </a>
         </div>
         <div class="footer-icp">
           <a href="http://beian.miit.gov.cn" target="_blank">湘ICP备2025125191号</a>
@@ -72,10 +96,18 @@
   font-size: 14px;
 }
 
+.footer-icon {
+  margin-right: 8px;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
 .footer-links a {
   color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
   transition: color 0.3s ease;
+  display: inline-flex;
+  align-items: center;
 }
 
 .footer-links a:hover {
@@ -85,6 +117,8 @@
 
 .footer-links span {
   color: rgba(255, 255, 255, 0.8);
+  display: inline-flex;
+  align-items: center;
 }
 
 .footer-icp {

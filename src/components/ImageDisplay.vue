@@ -1,4 +1,10 @@
 <script setup lang="ts">
+// 导入i18n
+import { useI18n } from 'vue-i18n'
+
+// 使用i18n
+const { t } = useI18n()
+
 // 定义组件属性
 defineProps<{
   previewUrl: string
@@ -28,7 +34,7 @@ defineProps<{
   
   <!-- 提示信息：当没有图片时显示 -->
   <div v-else class="hint-message">
-    请上传一张图片来查看效果
+    {{ t('app.pleaseUploadImage') }}
   </div>
 </template>
 

@@ -1,10 +1,16 @@
 <script setup lang="ts">
 // 导入Vue的响应式API
 import { ref } from 'vue'
+// 导入i18n相关
+import { useI18n } from 'vue-i18n'
+import { changeLanguage } from './i18n'
 // 导入组件
 import ImageUploader from './components/ImageUploader.vue'
 import ImageDisplay from './components/ImageDisplay.vue'
 import Footer from './components/Footer.vue'
+
+// 使用i18n
+const { t, locale } = useI18n()
 
 // 响应式状态管理
 const previewUrl = ref<string>('') // 图片预览URL
@@ -25,13 +31,23 @@ const handleReset = () => {
   previewUrl.value = ''
   isUploading.value = false
 }
+
+// 切换语言
+const toggleLanguage = () => {
+  const newLocale = locale.value === 'zh' ? 'en' : 'zh'
+  changeLanguage(newLocale as 'zh' | 'en')
+}
 </script>
 
 <template>
   <!-- 主应用容器 -->
   <div class="app-container">
+    <!-- 语言切换按钮 -->
+    <button class="language-toggle" @click="toggleLanguage">
+      {{ locale === 'zh' ? 'English' : '中文' }}
+    </button>
     <!-- 页面标题 -->
-    <h1>千幻图卡</h1>
+    <h1>{{ t('app.title') }}</h1>
     
     <!-- 图片上传组件 -->
     <ImageUploader 
@@ -61,6 +77,28 @@ const handleReset = () => {
   justify-content: flex-start;
   padding: 20px;
   font-family: 'Microsoft YaHei', 'PingFang SC', Arial, sans-serif;
+}
+
+/* 语言切换按钮 */
+.language-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #667eea;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.language-toggle:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 /* 标题样式 */

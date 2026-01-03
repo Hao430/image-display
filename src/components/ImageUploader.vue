@@ -1,6 +1,11 @@
 <script setup lang="ts">
 // 导入Vue的响应式API
 import { ref, computed } from 'vue'
+// 导入i18n
+import { useI18n } from 'vue-i18n'
+
+// 使用i18n
+const { t } = useI18n()
 
 // 定义组件属性
 defineProps<{
@@ -33,9 +38,9 @@ const canUpload = computed(() => {
 // 计算属性：动态生成上传按钮文本
 const uploadButtonText = computed(() => {
   if (uploadStatus.value === 'uploading') {
-    return `上传中... ${uploadProgress.value}%`
+    return `${t('app.uploading')} ${uploadProgress.value}%`
   }
-  return '上传图片'
+  return t('app.uploadImage')
 })
 
 // 处理文件选择
@@ -52,13 +57,13 @@ const handleFileChange = (event: Event) => {
     
     // 验证文件类型
     if (!allowedTypes.includes(file.type)) {
-      errorMessage.value = '只支持 JPG、PNG、GIF 和 WebP 格式的图片'
+      errorMessage.value = t('errors.fileType')
       return
     }
     
     // 验证文件大小
     if (file.size > maxFileSize) {
-      errorMessage.value = '图片大小不能超过 20MB'
+      errorMessage.value = t('errors.fileSize')
       return
     }
     
@@ -119,7 +124,7 @@ const handleReset = () => {
   <div class="upload-section">
     <!-- 上传容器：采用玻璃拟态设计 -->
     <div class="upload-container">
-      <h2>上传图片</h2>
+      <h2>{{ t('app.uploadImage') }}</h2>
       
       <!-- 文件选择：自定义样式的文件输入框 -->
       <div class="file-input-wrapper">
@@ -131,7 +136,7 @@ const handleReset = () => {
           :disabled="uploadStatus === 'uploading'"
         />
         <label for="fileInput" class="file-input-label">
-          {{ selectedFile ? selectedFile.name : '选择图片' }}
+          {{ selectedFile ? selectedFile.name : t('app.selectImage') }}
         </label>
       </div>
       
@@ -154,7 +159,7 @@ const handleReset = () => {
           :disabled="uploadStatus === 'uploading'"
           class="reset-button"
         >
-          重新选择
+          {{ t('app.reselect') }}
         </button>
       </div>
       
@@ -171,7 +176,7 @@ const handleReset = () => {
       
       <!-- 上传成功提示：上传完成后显示 -->
       <div v-if="uploadStatus === 'success'" class="success-message">
-        图片上传成功！
+        {{ t('app.uploadSuccess') }}
       </div>
     </div>
   </div>
