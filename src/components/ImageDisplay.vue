@@ -1,10 +1,8 @@
 <script setup lang="ts">
 // 导入i18n
 import { useI18n } from 'vue-i18n'
-// 导入ref
+// 导入ref和defineExpose
 import { ref } from 'vue'
-// 导入html2canvas
-import html2canvas from 'html2canvas'
 
 // 使用i18n
 const { t } = useI18n()
@@ -17,40 +15,9 @@ defineProps<{
 // 获取图片容器元素
 const imageContainerRef = ref<HTMLElement | null>(null)
 
-// 下载图片功能
-const downloadImage = async () => {
-  if (!imageContainerRef.value) return
-  
-  try {
-    // 使用html2canvas将DOM转换为canvas
-    const canvas = await html2canvas(imageContainerRef.value, {
-      backgroundColor: 'transparent',
-      scale: 2, // 提高分辨率，避免失真
-      useCORS: true, // 允许加载跨域图片
-      logging: false
-    })
-    
-    // 将canvas转换为blob
-    canvas.toBlob((blob) => {
-      if (!blob) return
-      
-      // 创建下载链接
-      const link = document.createElement('a')
-      link.href = URL.createObjectURL(blob)
-      link.download = `image-${Date.now()}.png`
-      link.click()
-      
-      // 释放URL对象
-      URL.revokeObjectURL(link.href)
-    }, 'image/png', 1.0) // 使用PNG格式，质量为1.0
-  } catch (error) {
-    console.error('下载图片失败:', error)
-  }
-}
-
-// 暴露downloadImage方法给父组件
+// 暴露imageContainerRef给父组件
 defineExpose({
-  downloadImage
+  imageContainerRef
 })
 </script>
 
@@ -125,8 +92,9 @@ defineExpose({
   height: auto;
   object-fit: contain;
   border-radius: 12px;
-  filter: blur(3px);
+  filter: blur(5px);
   opacity: 0.7;
+  padding: 0px;
 }
 
 /* 顶层图片（圆角阴影效果） */

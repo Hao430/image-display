@@ -17,7 +17,6 @@ const emit = defineEmits<{
   (e: 'fileSelected', file: File, previewUrl: string): void
   (e: 'upload'): void
   (e: 'reset'): void
-  (e: 'download'): void
 }>()
 
 // 响应式状态管理
@@ -36,13 +35,10 @@ const canUpload = computed(() => {
   return selectedFile.value !== null && uploadStatus.value !== 'uploading'
 })
 
-// 计算属性：动态生成按钮文本
-const buttonText = computed(() => {
+// 计算属性：动态生成上传按钮文本
+const uploadButtonText = computed(() => {
   if (uploadStatus.value === 'uploading') {
     return `${t('app.uploading')} ${uploadProgress.value}%`
-  }
-  if (previewUrl.value) {
-    return t('app.downloadImage')
   }
   return t('app.uploadImage')
 })
@@ -84,38 +80,32 @@ const handleFileChange = (event: Event) => {
   }
 }
 
-// 处理上传或下载
-const handleAction = () => {
+// 处理上传
+const handleUpload = () => {
   if (!selectedFile.value) return
   
-  if (previewUrl.value) {
-    // 如果已经有预览图，则执行下载
-    emit('download')
-  } else {
-    // 否则执行上传
-    // 更新上传状态
-    uploadStatus.value = 'uploading'
-    errorMessage.value = ''
-    uploadProgress.value = 0
+  // 更新上传状态
+  uploadStatus.value = 'uploading'
+  errorMessage.value = ''
+  uploadProgress.value = 0
+  
+  // 触发上传事件
+  emit('upload')
+  
+  // 模拟上传进度
+  const interval = setInterval(() => {
+    uploadProgress.value += 10
     
-    // 触发上传事件
-    emit('upload')
-    
-    // 模拟上传进度
-    const interval = setInterval(() => {
-      uploadProgress.value += 10
+    if (uploadProgress.value >= 100) {
+      clearInterval(interval)
+      uploadStatus.value = 'success'
       
-      if (uploadProgress.value >= 100) {
-        clearInterval(interval)
-        uploadStatus.value = 'success'
-        
-        // 模拟网络延迟
-        setTimeout(() => {
-          uploadProgress.value = 0
-        }, 1000)
-      }
-    }, 300)
-  }
+      // 模拟网络延迟
+      setTimeout(() => {
+        uploadProgress.value = 0
+      }, 1000)
+    }
+  }, 300)
 }
 
 // 重新选择文件
@@ -155,14 +145,14 @@ const handleReset = () => {
         {{ errorMessage }}
       </div>
       
-      <!-- 控制按钮：包含上传/下载和重置按钮 -->
+      <!-- 上传控制按钮：包含上传和重置按钮 -->
       <div class="upload-controls">
         <button 
-          @click="handleAction" 
+          @click="handleUpload" 
           :disabled="!canUpload"
           class="upload-button"
         >
-          {{ buttonText }}
+          {{ uploadButtonText }}
         </button>
         <button 
           @click="handleReset" 

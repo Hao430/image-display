@@ -1,12 +1,13 @@
 <script setup lang="ts">
 // 导入Vue的响应式API
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 // 导入i18n相关
 import { useI18n } from 'vue-i18n'
 import { changeLanguage } from './i18n'
 // 导入组件
 import ImageUploader from './components/ImageUploader.vue'
 import ImageDisplay from './components/ImageDisplay.vue'
+import DownloadButton from './components/DownloadButton.vue'
 import Footer from './components/Footer.vue'
 
 // 使用i18n
@@ -17,11 +18,28 @@ const previewUrl = ref<string>('') // 图片预览URL
 const isUploading = ref<boolean>(false) // 是否正在上传
 
 // 获取ImageDisplay组件实例
-const imageDisplayRef = ref<InstanceType<typeof ImageDisplay> | null>(null)
+const imageDisplayRef = ref<any>(null)
+
+// 计算属性：是否显示下载按钮
+const showDownloadButton = computed(() => {
+  return !!previewUrl.value
+})
+
+// 计算属性：获取图片容器元素
+const imageContainer = computed(() => {
+  if (!imageDisplayRef.value) return null
+  // defineExpose 直接暴露了 ref 对象，所以不需要访问 .value
+  return imageDisplayRef.value.imageContainerRef || null
+})
 
 // 处理文件选择事件
 const handleFileSelected = (_file: File, url: string) => {
   previewUrl.value = url
+  // 添加一个延时，确保DOM已经更新
+  setTimeout(() => {
+    console.log('ImageDisplay ref:', imageDisplayRef.value)
+    console.log('ImageContainer ref:', imageDisplayRef.value?.imageContainerRef)
+  }, 100)
 }
 
 // 处理上传事件
@@ -33,13 +51,6 @@ const handleUpload = () => {
 const handleReset = () => {
   previewUrl.value = ''
   isUploading.value = false
-}
-
-// 处理下载图片事件
-const handleDownload = () => {
-  if (imageDisplayRef.value) {
-    imageDisplayRef.value.downloadImage()
-  }
 }
 
 // 切换语言
@@ -65,13 +76,19 @@ const toggleLanguage = () => {
       @file-selected="handleFileSelected"
       @upload="handleUpload"
       @reset="handleReset"
-      @download="handleDownload"
     />
     
     <!-- 图片展示组件 -->
     <ImageDisplay 
       ref="imageDisplayRef"
       :preview-url="previewUrl" 
+    />
+    
+    <!-- 下载按钮组件 -->
+    <DownloadButton 
+      :is-visible="showDownloadButton"
+      :image-container="imageContainer"
+      :is-loading="isUploading"
     />
     
     <!-- 页脚组件 -->
