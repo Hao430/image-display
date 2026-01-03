@@ -16,6 +16,9 @@ const { t, locale } = useI18n()
 const previewUrl = ref<string>('') // 图片预览URL
 const isUploading = ref<boolean>(false) // 是否正在上传
 
+// 获取ImageDisplay组件实例
+const imageDisplayRef = ref<InstanceType<typeof ImageDisplay> | null>(null)
+
 // 处理文件选择事件
 const handleFileSelected = (_file: File, url: string) => {
   previewUrl.value = url
@@ -30,6 +33,13 @@ const handleUpload = () => {
 const handleReset = () => {
   previewUrl.value = ''
   isUploading.value = false
+}
+
+// 处理下载图片事件
+const handleDownload = () => {
+  if (imageDisplayRef.value) {
+    imageDisplayRef.value.downloadImage()
+  }
 }
 
 // 切换语言
@@ -55,10 +65,14 @@ const toggleLanguage = () => {
       @file-selected="handleFileSelected"
       @upload="handleUpload"
       @reset="handleReset"
+      @download="handleDownload"
     />
     
     <!-- 图片展示组件 -->
-    <ImageDisplay :preview-url="previewUrl" />
+    <ImageDisplay 
+      ref="imageDisplayRef"
+      :preview-url="previewUrl" 
+    />
     
     <!-- 页脚组件 -->
     <Footer />

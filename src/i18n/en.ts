@@ -5,6 +5,7 @@ export default {
     uploadSuccess: 'Image uploaded successfully!',
     selectImage: 'Select Image',
     uploadImage: 'Upload Image',
+    downloadImage: 'Download Image',
     reselect: 'Reselect',
     pleaseUploadImage: 'Please upload an image to see the effect',
     domain: 'Domain',

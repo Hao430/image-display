@@ -1,6 +1,10 @@
 <script setup lang="ts">
 // 导入i18n
 import { useI18n } from 'vue-i18n'
+// 导入ref
+import { ref } from 'vue'
+// 导入html2canvas
+import html2canvas from 'html2canvas'
 
 // 使用i18n
 const { t } = useI18n()
@@ -9,13 +13,52 @@ const { t } = useI18n()
 defineProps<{
   previewUrl: string
 }>()
+
+// 获取图片容器元素
+const imageContainerRef = ref<HTMLElement | null>(null)
+
+// 下载图片功能
+const downloadImage = async () => {
+  if (!imageContainerRef.value) return
+  
+  try {
+    // 使用html2canvas将DOM转换为canvas
+    const canvas = await html2canvas(imageContainerRef.value, {
+      backgroundColor: 'transparent',
+      scale: 2, // 提高分辨率，避免失真
+      useCORS: true, // 允许加载跨域图片
+      logging: false
+    })
+    
+    // 将canvas转换为blob
+    canvas.toBlob((blob) => {
+      if (!blob) return
+      
+      // 创建下载链接
+      const link = document.createElement('a')
+      link.href = URL.createObjectURL(blob)
+      link.download = `image-${Date.now()}.png`
+      link.click()
+      
+      // 释放URL对象
+      URL.revokeObjectURL(link.href)
+    }, 'image/png', 1.0) // 使用PNG格式，质量为1.0
+  } catch (error) {
+    console.error('下载图片失败:', error)
+  }
+}
+
+// 暴露downloadImage方法给父组件
+defineExpose({
+  downloadImage
+})
 </script>
 
 <template>
   <!-- 图片展示区域：当有预览URL时显示 -->
   <div v-if="previewUrl" class="image-section">
     <!-- 图片容器（承载两张叠放的图片） -->
-    <div class="image-container">
+    <div class="image-container" ref="imageContainerRef">
       <!-- 底层玻璃拟态卡片：包含模糊的图片和玻璃效果，增强视觉层次感 -->
       <div class="glass-card">
         <!-- 底层图片：模糊化处理，作为背景 -->
@@ -64,14 +107,14 @@ defineProps<{
 .glass-card {
   position: absolute;
   width: calc(100% - 40px);
-  border-radius: 16px;
+  border-radius: 20px;
   padding: 0px;
-  border: 8px solid #ffffff;
-  background: rgba(255, 255, 255, 0.4);
+  border: 12px solid #ffffff;
+  background: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 5px 32px rgba(0, 0, 0, 0.05);
-  filter: blur(2px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  /* filter: blur(2px); */
   opacity: 0.8;
   transition: none;
 }
@@ -94,7 +137,7 @@ defineProps<{
   height: auto;
   object-fit: contain;
   border-radius: 16px;
-  box-shadow: 0 5px 32px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
   transition: transform 0.3s ease;
   cursor: pointer;
 }

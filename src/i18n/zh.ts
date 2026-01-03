@@ -5,6 +5,7 @@ export default {
     uploadSuccess: '图片上传成功！',
     selectImage: '选择图片',
     uploadImage: '上传图片',
+    downloadImage: '下载图片',
     reselect: '重新选择',
     pleaseUploadImage: '请上传一张图片来查看效果',
     domain: '域名',
