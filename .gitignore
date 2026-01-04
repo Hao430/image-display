@@ -11,7 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
-原型图
+test-image
 
 # Editor directories and files
 .vscode/*

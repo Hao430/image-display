@@ -7,9 +7,13 @@ import { ref } from 'vue'
 // 使用i18n
 const { t } = useI18n()
 
+// 定义效果类型
+type EffectType = 'glass' | 'focus'
+
 // 定义组件属性
 defineProps<{
   previewUrl: string
+  effect: EffectType
 }>()
 
 // 获取图片容器元素
@@ -26,19 +30,36 @@ defineExpose({
   <div v-if="previewUrl" class="image-section">
     <!-- 图片容器（承载两张叠放的图片） -->
     <div class="image-container" ref="imageContainerRef">
-      <!-- 底层玻璃拟态卡片：包含模糊的图片和玻璃效果，增强视觉层次感 -->
-      <div class="glass-card">
-        <!-- 底层图片：模糊化处理，作为背景 -->
-        <img :src="previewUrl" alt="图片背景层" />
-      </div>
+      <!-- 玻璃拟态效果 -->
+      <div v-if="effect === 'glass'" class="effect-wrapper">
+        <!-- 底层玻璃拟态卡片：包含模糊的图片和玻璃效果，增强视觉层次感 -->
+        <div class="glass-card">
+          <!-- 底层图片：模糊化处理，作为背景 -->
+          <img :src="previewUrl" alt="图片背景层" />
+        </div>
 
-      <!-- 顶层图片：清晰显示，具有圆角阴影效果，作为主要展示内容 -->
-      <img 
-        class="top-image" 
-        :src="previewUrl" 
-        alt="上传的图片" 
-        title="点击查看大图"
-      />
+        <!-- 顶层图片：清晰显示，具有圆角阴影效果，作为主要展示内容 -->
+        <img 
+          class="top-image" 
+          :src="previewUrl" 
+          alt="上传的图片" 
+          title="点击查看大图"
+        />
+      </div>
+      
+      <!-- 主体突出效果 -->
+      <div v-else-if="effect === 'focus'" class="effect-wrapper">
+        <!-- 底层图片 -->
+        <img 
+          class="bottom-image" 
+          :src="previewUrl" 
+          alt="上传的图片" 
+          title="点击查看大图"
+        />
+        
+        <!-- 顶层透明容器（悬浮边框效果） -->
+        <div class="focus-frame"></div>
+      </div>
     </div>
   </div>
   
@@ -97,6 +118,16 @@ defineExpose({
   padding: 0px;
 }
 
+/* 效果包装器 */
+.effect-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
 /* 顶层图片（圆角阴影效果） */
 .top-image {
   position: relative;
@@ -112,6 +143,46 @@ defineExpose({
 
 .top-image:hover {
   transform: scale(1.02);
+}
+
+/* 主体突出效果 - 底层图片 */
+.bottom-image {
+  /* 图片宽度100%，等比缩放 */
+  width: 100%;
+  /* 高度自动，保持原图比例 */
+  height: auto;
+  /* 确保图片不裁剪，完整显示 */
+  object-fit: contain;
+  /* 添加图片圆角效果 */
+  border-radius: 16px;
+  /* 添加柔和阴影 */
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  /* 确保在容器底部 */
+  z-index: 1;
+}
+
+/* 主体突出效果 - 顶层透明容器（悬浮边框效果） */
+.focus-frame {
+  /* 绝对定位，在图片中央 */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  /* 居中偏移 */
+  transform: translate(-50%, -50%);
+  /* 容器大小小于图片，约为图片的70% */
+  width: 70%;
+  height: 70%;
+  /* 确保在图片之上 */
+  z-index: 10;
+
+  /* 完全透明背景 */
+  background: transparent;
+  /* 边框外发光效果，增强悬浮感 */
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1),
+              0 0 40px rgba(0, 0, 0, 0.9),
+              inset 0 0 20px rgba(255, 255, 255, 0.4);
+  /* 圆角效果 */
+  border-radius: 12px;
 }
 
 /* 提示信息 */

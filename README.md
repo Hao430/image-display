@@ -6,11 +6,6 @@
   <p>支持多种图片格式，具有优雅的双层玻璃拟态效果，一键生成精美图片卡片</p>
 </div>
 
-## 📸 项目预览
-
-<div align="center">
-  <img src="https://cdn.jsdelivr.net/gh/hao430/image-display@main/screenshots/demo.png" alt="千幻图卡 预览" width="600px" />
-</div>
 
 ## ✨ 功能特性
 
